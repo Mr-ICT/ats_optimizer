@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ResumeIQ — Beat the ATS</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@400;500&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/static/css/style.css" />
+</head>
+<body>
+  <!-- ── Splash Loader ── -->
+<div id="splash-loader">
+  <div class="splash-inner">
+    <img src="/static/img/logo.png" alt="ResumeIQ" class="splash-logo" />
+    <div class="splash-tagline">OPTIMIZE · MATCH · GET HIRED</div>
+    <div class="splash-bar-track">
+      <div class="splash-bar-fill" id="splash-bar"></div>
+    </div>
+    <div class="splash-percent" id="splash-percent">0%</div>
+  </div>
+</div>
+
+<!-- ── Header ── -->
+<header class="site-header">
+  <div class="header-inner">
+    <div class="logo">
+      <img src="/static/img/logo.png" alt="ResumeIQ Logo" class="header-logo-img" />
+    </div>
+    <nav class="header-nav">
+      <a href="/health" target="_blank">System Health</a>
+      <a href="/api/config" target="_blank">Score Config</a>
+    </nav>
+  </div>
+</header>
+
+  <!-- ── Hero ── -->
+  <section class="hero">
+    <div class="hero-bg-grid"></div>
+    <div class="hero-content">
+      <div class="hero-badge">• Real ATS Logic • Instant Feedback • </div>
+      <h1>Meet <span class="accent">ResumeIQ</span><br/>Get the Interview</h1>
+      <p class="hero-sub">Upload your resume and paste a job description. Our multi-stage NLP pipeline analyzes keyword gaps, semantic fit, and formatting issues — then generates tailored AI suggestions.</p>
+    </div>
+  </section>
+
+  <!-- ── Upload Form ── -->
+  <main class="main-content">
+    <section class="upload-section" id="upload-section">
+      <div class="upload-grid">
+        <!-- Left: Resume Upload -->
+        <div class="upload-card" id="drop-zone">
+          <div class="upload-icon">
+            <svg width="40" height="40" viewBox="0 0 40 40" fill="none">
+              <path d="M20 4L20 26M20 4L13 11M20 4L27 11" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M6 28V32C6 33.1 6.9 34 8 34H32C33.1 34 34 33.1 34 32V28" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
+            </svg>
+          </div>
+          <h3>Upload Resume</h3>
+          <p>Drag & drop or click to browse</p>
+          <span class="format-tag">PDF · DOCX</span>
+          <input type="file" id="resume-input" accept=".pdf,.docx" hidden />
+          <div class="file-selected" id="file-label">No file selected</div>
+        </div>
+
+        <!-- Right: JD Text Area -->
+        <div class="jd-card">
+          <label for="jd-input">
+            <span class="card-label">Job Description</span>
+            <span class="char-count" id="char-count">0 chars</span>
+          </label>
+          <textarea
+            id="jd-input"
+            placeholder="Paste the full job description here…&#10;&#10;Include requirements, responsibilities, and qualifications for the most accurate analysis."
+            rows="12"
+          ></textarea>
+        </div>
+      </div>
+
+      <div class="action-row">
+        <button class="btn-analyze" id="analyze-btn" disabled>
+          <span class="btn-text">Analyze Resume</span>
+          <span class="btn-arrow">→</span>
+        </button>
+        <p class="disclaimer">Resume is processed locally and deleted immediately after analysis.</p>
+      </div>
+    </section>
+
+    <!-- ── Loading State ── -->
+    <div class="loading-screen" id="loading-screen" hidden>
+      <div class="loading-inner">
+        <div class="loading-spinner"></div>
+        <div class="loading-steps" id="loading-steps">
+          <div class="step" data-step="1">📄 Parsing document…</div>
+          <div class="step" data-step="2">🔑 Extracting keywords…</div>
+          <div class="step" data-step="3">🧠 Computing semantic similarity…</div>
+          <div class="step" data-step="4">📊 Calculating ATS score…</div>
+          <div class="step" data-step="5">🤖 Generating AI suggestions…</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Results ── -->
+    <section class="results-section" id="results-section" hidden>
+      <!-- Score Hero -->
+      <div class="score-hero">
+        <div class="score-gauge-wrap">
+          <svg class="score-gauge" viewBox="0 0 200 120" width="260">
+            <defs>
+              <linearGradient id="gaugeGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" style="stop-color:#ef4444"/>
+                <stop offset="40%" style="stop-color:#f97316"/>
+                <stop offset="70%" style="stop-color:#3b82f6"/>
+                <stop offset="100%" style="stop-color:#22c55e"/>
+              </linearGradient>
+            </defs>
+            <!-- Track -->
+            <path d="M 20 100 A 80 80 0 0 1 180 100" fill="none" stroke="#1e293b" stroke-width="16" stroke-linecap="round"/>
+            <!-- Fill -->
+            <path id="gauge-fill" d="M 20 100 A 80 80 0 0 1 180 100" fill="none" stroke="url(#gaugeGrad)" stroke-width="16" stroke-linecap="round" stroke-dasharray="251" stroke-dashoffset="251"/>
+          </svg>
+          <div class="score-center">
+            <span class="score-number" id="score-number">0</span>
+            <span class="score-label">ATS Score</span>
+            <span class="score-grade" id="score-grade">—</span>
+          </div>
+        </div>
+
+        <div class="score-breakdown">
+          <h3>Score Breakdown</h3>
+          <div class="breakdown-bars" id="breakdown-bars"></div>
+        </div>
+      </div>
+
+      <!-- Results Grid -->
+      <div class="results-grid">
+
+        <!-- Keyword Analysis -->
+        <div class="result-card" id="keyword-card">
+          <div class="card-header">
+            <h3>🔑 Keyword Analysis</h3>
+            <span class="badge" id="kw-badge">—</span>
+          </div>
+          <div class="keyword-stats" id="keyword-stats"></div>
+          <div class="keyword-lists" id="keyword-lists"></div>
+        </div>
+
+        <!-- Formatting Issues -->
+        <div class="result-card" id="issues-card">
+          <div class="card-header">
+            <h3>⚠️ Detected Issues</h3>
+            <span class="badge badge-warn" id="issues-badge">—</span>
+          </div>
+          <div id="issues-list"></div>
+        </div>
+
+        <!-- Sections & Parse Info -->
+        <div class="result-card" id="sections-card">
+          <div class="card-header">
+            <h3>📋 Document Analysis</h3>
+          </div>
+          <div id="sections-content"></div>
+        </div>
+
+        <!-- Semantic Score -->
+        <div class="result-card" id="semantic-card">
+          <div class="card-header">
+            <h3>🧠 Semantic Similarity</h3>
+          </div>
+          <div id="semantic-content"></div>
+        </div>
+
+      </div>
+
+      <!-- AI Feedback -->
+      <div class="ai-section" id="ai-section">
+        <div class="ai-header">
+          <span class="ai-label">AI-Powered Suggestions</span>
+          <h2>Tailored Improvement Plan</h2>
+        </div>
+        <div class="ai-grid" id="ai-grid"></div>
+      </div>
+
+      <!-- Re-analyze -->
+      <div class="reanalyze-row">
+        <button class="btn-outline" id="reanalyze-btn">← Analyze Another Resume</button>
+      </div>
+    </section>
+
+    <!-- ── Error State ── -->
+    <div class="error-screen" id="error-screen"  hidden>
+      <div class="error-inner">
+        <span class="error-icon"></span>
+        <h3></h3>
+        <p id="error-message">Be patient we are working on it </p>
+        <button class="btn-outline" id="error-retry-btn"></button>
+      </div>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+  <p>Made with <span style="color:#ef4444">♥</span> by BluePrint Tech &nbsp;·&nbsp; <span id="footer-year"></span></p>
+</footer>
+<script>
+  document.getElementById("footer-year").textContent = new Date().getFullYear();
+</script>
+
+  <script src="/static/js/app.js"></script>
+</body>
+</html>
